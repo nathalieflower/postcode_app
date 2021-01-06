@@ -1,16 +1,19 @@
 import requests
 import json
+import sys
+
+from PostcodeData import PostcodeData
 
 
 def main():
-    print("Please input postcode:")
-
-    postcode = 'PE28 3JT'
+    postcode = sys.argv[1]
     r = requests.get(f'http://api.postcodes.io/postcodes/{postcode}/validate')
     result = json.loads(r.text)
     if result['result']:
-        print(postcode_info(postcode))
-        print(nearest_postcodes(postcode))
+        print(f"Input postcode")
+        postcode_info(postcode)
+        print(f"\nNearest Postcodes")
+        nearest_postcodes(postcode)
     else:
         print("Error: Invalid postcode")
 
@@ -18,17 +21,21 @@ def main():
 def postcode_info(postcode):
     info = requests.get(f'http://api.postcodes.io/postcodes/{postcode}')
     response = json.loads(info.text)
-    country = response['result']['country']
-    region = response['result']['region']
-    result = f"Region: {region} \nCountry: {country}"
-    return result
+    postcode_data = PostcodeData(response['result']['postcode'], response['result']['region'],
+                                 response['result']['country'])
+    print(str(postcode_data))
+
 
 def nearest_postcodes(postcode):
     info = requests.get(f'http://api.postcodes.io/postcodes/{postcode}/nearest')
     response = json.loads(info.text)
-    postcodes = {item['postcode'] for item in response['result']}
+    postcode_data = {PostcodeData(item['postcode'],
+                                  item['country'],
+                                  item['region'])
+                     for item in response['result'] if not postcode == item['postcode']}
 
-    return postcodes
+    for data in postcode_data:
+        print(str(data))
 
 
 if __name__ == "__main__":
