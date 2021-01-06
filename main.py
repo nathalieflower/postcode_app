@@ -7,35 +7,42 @@ from PostcodeData import PostcodeData
 
 def main():
     postcode = sys.argv[1]
-    r = requests.get(f'http://api.postcodes.io/postcodes/{postcode}/validate')
-    result = json.loads(r.text)
-    if result['result']:
+    if validate_postcode(postcode):
         print(f"Input postcode")
-        postcode_info(postcode)
+        print(str(get_postcode_info(postcode)))
         print(f"\nNearest Postcodes")
-        nearest_postcodes(postcode)
+        for data in get_nearest_postcodes(postcode):
+            print(str(data))
     else:
         print("Error: Invalid postcode")
 
 
-def postcode_info(postcode):
+def validate_postcode(postcode):
+    info = requests.get(f'http://api.postcodes.io/postcodes/{postcode}/validate')
+    result = json.loads(info.text)
+    if result['result']:
+        return bool(True)
+    else:
+        return bool(False)
+
+
+def get_postcode_info(postcode):
     info = requests.get(f'http://api.postcodes.io/postcodes/{postcode}')
     response = json.loads(info.text)
     postcode_data = PostcodeData(response['result']['postcode'], response['result']['region'],
                                  response['result']['country'])
-    print(str(postcode_data))
+    return postcode_data
 
 
-def nearest_postcodes(postcode):
+def get_nearest_postcodes(postcode):
     info = requests.get(f'http://api.postcodes.io/postcodes/{postcode}/nearest')
     response = json.loads(info.text)
-    postcode_data = {PostcodeData(item['postcode'],
-                                  item['country'],
-                                  item['region'])
-                     for item in response['result'] if not postcode == item['postcode']}
+    postcode_data = [PostcodeData(item['postcode'],
+                                  item['region'],
+                                  item['country'])
+                     for item in response['result'] if not postcode == item['postcode']]
 
-    for data in postcode_data:
-        print(str(data))
+    return postcode_data
 
 
 if __name__ == "__main__":
