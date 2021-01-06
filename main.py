@@ -7,23 +7,25 @@ from PostcodeData import PostcodeData
 
 def main():
     postcode = sys.argv[1]
-    if validate_postcode(postcode):
-        print(f"Input postcode")
-        print(str(get_postcode_info(postcode)))
-        print(f"\nNearest Postcodes")
-        for data in get_nearest_postcodes(postcode):
-            print(str(data))
-    else:
-        print("Error: Invalid postcode")
+    postcode_is_valid = validate_postcode(postcode)
+    if not postcode_is_valid:
+        print("Error: Invalid Postcode")
+        exit(1)
+
+    print(f"Input postcode")
+    print(str(get_postcode_info(postcode)))
+    print(f"\nNearest Postcodes")
+    for data in get_nearest_postcodes(postcode):
+        print(str(data))
 
 
 def validate_postcode(postcode):
     info = requests.get(f'http://api.postcodes.io/postcodes/{postcode}/validate')
     result = json.loads(info.text)
     if result['result']:
-        return bool(True)
+        return True
     else:
-        return bool(False)
+        return False
 
 
 def get_postcode_info(postcode):
