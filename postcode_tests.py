@@ -9,14 +9,14 @@ class IsPostcodeValid(unittest.TestCase):
 
         result = validate_postcode(postcode)
 
-        self.assertTrue(result)
+        assert result
 
     def test_invalid_postcode(self):
         postcode = "Invalid Postcode"
 
         result = validate_postcode(postcode)
 
-        self.assertFalse(result)
+        assert not result
 
 
 class PostCodeInfoReturnsCorrectPostcodeInfo(unittest.TestCase):
@@ -27,9 +27,9 @@ class PostCodeInfoReturnsCorrectPostcodeInfo(unittest.TestCase):
 
         result = get_postcode_info(postcode)
 
-        self.assertNotEqual(result, None)
-        self.assertEqual(result.region, region)
-        self.assertEqual(result.country, country)
+        assert result != None
+        assert result.region == region
+        assert result.country == country
 
 
 class NearestPostcodeReturnsCorrectNearestPostcodes(unittest.TestCase):
@@ -41,8 +41,8 @@ class NearestPostcodeReturnsCorrectNearestPostcodes(unittest.TestCase):
 
         postcode_1_count = sum(1 for item in result if item.postcode == nearest_postcode_1)
 
-        self.assertEqual(postcode_1_count, 1)
-        self.assertNotEqual(result, None)
+        assert postcode_1_count == 1
+        assert result != None
 
 
 if __name__ == '__main__':
