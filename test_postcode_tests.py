@@ -1,20 +1,20 @@
 import unittest
 
-from main import get_postcode_info, get_nearest_postcodes, main, validate_postcode
+import main
 
 
 class IsPostcodeValid(unittest.TestCase):
     def test_valid_postcode(self):
         postcode = "CB4 0GF"
 
-        result = validate_postcode(postcode)
+        result = main.validate_postcode(postcode)
 
         assert result
 
     def test_invalid_postcode(self):
         postcode = "Invalid Postcode"
 
-        result = validate_postcode(postcode)
+        result = main.validate_postcode(postcode)
 
         assert not result
 
@@ -25,7 +25,7 @@ class PostCodeInfoReturnsCorrectPostcodeInfo(unittest.TestCase):
         region = "East of England"
         country = "England"
 
-        result = get_postcode_info(postcode)
+        result = main.get_postcode_info(postcode)
 
         assert result != None
         assert result.region == region
@@ -37,7 +37,7 @@ class NearestPostcodeReturnsCorrectNearestPostcodes(unittest.TestCase):
         postcode = "CB4 0GF"
         nearest_postcode_1 = "CB4 0GA"
 
-        result = get_nearest_postcodes(postcode)
+        result = main.get_nearest_postcodes(postcode)
 
         postcode_1_count = sum(1 for item in result if item.postcode == nearest_postcode_1)
 
